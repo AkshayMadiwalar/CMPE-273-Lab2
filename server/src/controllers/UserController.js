@@ -1,36 +1,12 @@
-const UserModel = require('../models/UserModel')
-const ProductModel = require('./../models/ProductModel')
-const FavoritesModel = require('./../models/FavoritesModel')
-const jwt = require('jsonwebtoken')
-const config = require('../../config/constants')
-const bcrypt = require('bcrypt')
-const uuid = require('uuid').v4
+const kafka = require('./../../kafka/kafka')
+const actions = require('./../../actions/actions.json')
 
 exports.createUser = async (req, res) => {
     const { firstName, email, password } = req.body
-    try {
-        const User = await UserModel.findOne({email}).exec()
-        if(User){
-            return res.status(400).json({message:"User already registered"})
-        }
-        const salt = await bcrypt.genSalt(10)
-        const encrypted = await bcrypt.hash(password, salt)
-        
-        const user = new UserModel({
-            id:uuid(),
-            first_name : firstName,
-            email: email,
-            password: encrypted
-        })
-
-        user.save((err,data) =>{
-            if(err) return res.status(500).json({message:"Server Error :"+err})
-            return res.json(data)
-        })
-
-    } catch (error) {
-        res.status(500).json({ message: "Server Error" + error})
-    }
+    kafka.sendKafkaRequest('users',{ firstName, email, password, action:actions.CREATE_USER },(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.updateUser = async (req, res) => {
@@ -48,98 +24,47 @@ exports.updateUser = async (req, res) => {
         about,
         profileImg
     } = req.body
-
-    try {
-        const user = await UserModel.findOne({id}).exec()
-        console.log("before updating",user)
-        if(user){
-            const id = user._id
-            user.update({
-                first_name:firstName,
-                last_name:lastName,
-                email:email,
-                gender:gender,
-                dob:dob,
-                city:city,
-                address:address,
-                zipcode:zipcode,
-                country:country,
-                about:about,
-                profileImg:profileImg
-            }, (err,data) => {
-                console.log("reached here",err)
-                if(err) return res.status(500).json({message:"Server error"})
-                return res.json(data)
-            })
-        }    
-    } catch (error) {
-        console.log("reached here2 ",error)
-        return res.status(500).json({ message: 'Server error' })
-    }
+    kafka.sendKafkaRequest('users',{         
+        id,
+        firstName,
+        lastName,
+        email,
+        gender,
+        dob,
+        city,
+        address,
+        zipcode,
+        country,
+        about,
+        profileImg, 
+        action:actions.UPDATE_USER},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.addToFavorites = async (req, res) => {
     const { id, productId } = req.body
-    try {
-        const favorite = await FavoritesModel.findOne({id:id,product_id:productId})
-        console.log("Favrorite: ",favorite)
-        if(favorite==null){
-            console.log("1")
-            const product = await ProductModel.findOne({product_id:productId}).exec()
-            if(product){
-                console.log("2")
-                const newFavorite = await new FavoritesModel({
-                    id,
-                    product_id:productId,
-                    sellerId: product.seller_id,
-                    productName: product.product_name,
-                    category: product.category,
-                    description: product.description,
-                    price: product.price,
-                    quantity: product.quantity,
-                    img:product.img
-                })
-                await newFavorite.save((err,data)=>{
-                    console.log("3",err)
-                    if(err) return res.status(500).json({message:"Server Error"+err})
-                    return res.json(data)
-                })
-            }else{
-                return res.status(500).json({message:"Inavalid Product"})
-            }
-        }else{
-            return res.status(500).json({message:"Already added to Favorites"})
-        }
-    } catch (error) {
-        console.log("error too, ",error)
-        return res.status(500).json({ message: "Server error"+error })
-    }
+    kafka.sendKafkaRequest('favorites',{ id, productId, action:actions.ADD_TO_FAVORITES },(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.removeFromFavorites = async (req,res) => {
     const { id, productId } = req.body
-    try {
-        const data = await FavoritesModel.deleteOne({id:id,product_id:productId}).exec()
-        if(data){
-            return res.json(data)
-        }
-        return res.status(500).json({message:"Server Error"+err})
-    } catch (error) {
-        return res.status(500).json({message:"Server error"+error})
-    }
+    kafka.sendKafkaRequest('favorites',{ id, productId, action:actions.REMOVE_FROM_FAVORITES},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.myFavorites = async (req,res) => {
-    const {id} = req.body
-    try {
-        const favs = await FavoritesModel.find({id}).exec()
-        if(favs){
-            return res.json(favs)
-        }
-        return res.status(500).json({message:"Server error"})
-    } catch (error) {
-        return res.status(500).json({message:"Server error"})
-    }
+    const { id } = req.body
+    kafka.sendKafkaRequest('favorites',{ id, action:actions.MY_FAVORITES},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 // exports.searchFavorite = (req,res) => {

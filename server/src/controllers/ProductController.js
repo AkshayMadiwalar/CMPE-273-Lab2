@@ -1,29 +1,14 @@
-const ProductModel = require('./../models/ProductModel')
 const elasticClient = require('./../../config/ElasticClient')
-const uuid = require('uuid').v4
+
+const kafka = require('./../../kafka/kafka')
+const actions = require('./../../actions/actions.json')
 
 exports.create = async (req,res)=>{
     const {sellerId,name,category,description,price,quantity,img} = req.body
-    try {
-        const product = new ProductModel({
-            product_id: uuid(),
-            seller_id:sellerId,
-            name,
-            category,
-            description,
-            price,
-            quantity,
-            img
-        })
-
-        await product.save((err,data)=>{
-            if(err) return res.status(500).json({message:"Server error : \n"+ err})
-            return res.json({message:"Product added"})
-        })
-
-    } catch (error) {
-        return res.status(500).json({message:"Server error"})
-    }
+    kafka.sendKafkaRequest('products',{ sellerId,name,category,description,price,quantity,img, action:actions.CREATE_PRODUCT},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.getProduct = (req,res) => {
@@ -50,115 +35,71 @@ exports.getProduct = (req,res) => {
 
 exports.editProduct = async (req,res) => {
     const {elasticId,productId,name,category,description,price,quantity,img} = req.body
-    try {
-        const product = await ProductModel.findOne({product_id:productId}).exec()
-        if(product){
-            product.update({
-                name,category,description,price,quantity,img
-            },(err,data) => {
-                if(err) return res.status(500).json({message:"Server error : \n"+ err})
-                return res.json({message:"Product updated"})
-            })
-        }
-    } catch (error) {
-        return res.status(500).json({message:"Server error"})
-    }
+    kafka.sendKafkaRequest('products',{ elasticId,productId,name,category,description,price,quantity,img, action:actions.EDIT_PRODUCT},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.getItems = async (req,res) => {
     const {sellerId} = req.body
-    try {
-        const products = await ProductModel.find({seller_id:sellerId}).exec()
-        if(products){
-            return res.json(products)
-        }
-        return res.status(500).json({message:"Server error"+err})
-    } catch (error) {
-        return res.status(500).json({message:"Server error"+error})
-    }
+    kafka.sendKafkaRequest('products',{ sellerId, action:actions.GET_ITEMS},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
-exports.getProducts = (req,res) => {
-    try {
-        ProductModel.getAll({},(err,data)=>{
-            if(err) return res.status(500).json({message:"Server Error"})
-            if(data)   return res.json(data)
-        })
-    } catch (error) {
-        return res.status(500).json({message:"Server error"})
-    }
+exports.getProducts = async (req,res) => {
+    kafka.sendKafkaRequest('products',{  action:actions.GET_PRODUCTS},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.getProductById = async (req,res) => {
     const productId = req.params.id
-    try {
-        const product = await ProductModel.findOne({product_id:productId}).exec()
-        if(product){
-            return res.json(product)
-        }
-        return res.status(404).send("No product found")
-    } catch (error) {
-        return res.status(500).json({message:"Server error"})
-    }
+    kafka.sendKafkaRequest('products',{ productId, action:actions.GET_PRODUCT_BY_ID},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.getProductsByCategory = (req,res) => {
     const {category} = req.body
-    try {
-        ProductModel.getProductsByCategory({category},(err,data) => {
-            if(err) return res.status(500).json({message:"Server Error"})
-            if(data)
-                return res.json(data)
-        })
-    } catch (error) {
-        return res.status(500).json({message:"Server error"})
-    }
+    kafka.sendKafkaRequest('products',{ category, action:actions.GET_PRODUCTS_BY_CATEGORY},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.getFIlteredProducts = (req,res) => {
     const {category,price} = req.body
-    try {
-        ProductModel.getProductsByFilter({category,price},(err,data)=>{
-            if(err) return res.status(500).json({message:"Server Error"+err})
-            return res.json(data)
-        })
-    } catch (error) {
-        return res.status(500).json({message:"Server Error"+ error})
-    }
+    kafka.sendKafkaRequest('products',{ category,price, action:actions.GET_FILTERED_PRODUCTS},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.filteredProductsSortByPrice = (req,res) => {
     const {category,price,order} = req.body
-    try {
-        ProductModel.productsSortByPrice({category,price,order},(err,data)=>{
-            if(err) return res.status(500).json({message:"Server Error"+err})
-            return res.json(data)
-        })
-    } catch (error) {
-        return res.status(500).json({message:"Server Error"+error})
-    }
+    kafka.sendKafkaRequest('products',{ category,price,order, action:actions.GET_FILTERED_PRODUCTS_SORT_BY_PRICE},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.filteredProductsSortByQuantity = (req,res) => {
     const {category,price,quantity,order} = req.body
-    try {
-        ProductModel.productsSortByQuantity({category,price,quantity,order},(err,data)=>{
-            if(err) return res.status(500).json({message:"Server Error"})
-            return res.json(data)
-        })
-    } catch (error) {
-        return res.status(500).json({message:"Server Error"})
-    }
+    kafka.sendKafkaRequest('products',{ category,price,quantity,order, action:actions.GET_FILTERED_PRODUCTS_SORT_BY_QUANTITY},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.filteredProductsSortBySales = (req,res) => {
     const {category,price,order} = req.body
-    try {
-        ProductModel.productsSortBySales({category,price,order},(err,data)=>{
-            if(err) return res.status(500).json({message:"Server Error"})
-            return res.json(data)
-        })
-    } catch (error) {
-        return res.status(500).json({message:"Server Error"})
-    }
+    kafka.sendKafkaRequest('products',{ category,price,order, action:actions.GET_FILTERED_PRODUCTS_SORT_BY_SALES},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }

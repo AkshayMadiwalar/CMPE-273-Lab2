@@ -106,6 +106,7 @@ const EditProfile = () => {
             })
         }))
         const imageUrl = uploadUrl.split('?')[0]
+        console.log("Image URL: ",imageUrl)
         const res = await axios.post(constants.uri+"/users/update-profile", { ...formData, id: userId, profileImg: imageUrl })
         console.log(res)
         if (res.status === 200) {

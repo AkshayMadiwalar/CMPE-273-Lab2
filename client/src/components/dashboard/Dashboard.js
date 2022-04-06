@@ -24,7 +24,8 @@ const Dashboard = () => {
         //Set user id from access token stored in localstorage
         const token = window.localStorage.getItem("userdetails")
         const res = await axios.post(constants.uri + "/users/auth", { token })
-        setUser(res.data.id)
+        console.log(res)
+        setUser(res.data)
 
         //Get all products
         const { data } = await axios.get(constants.uri + '/dashboard/products')
@@ -79,7 +80,7 @@ const Dashboard = () => {
             //Add to favorites
             try {
                 console.log(user)
-                const res = await axios.post(constants.uri + "/users/add-to-favorites", { id: user, productId: product.product_id })
+                const res = await axios.post(constants.uri + "/users/add-to-favorites", { id: user.id, productId: product.product_id })
                 setFavorites([...favorites, product.product_id])
                 toast("Added to your favorites collection!", { position: 'top-center' })
             } catch (error) {

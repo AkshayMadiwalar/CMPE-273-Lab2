@@ -1,40 +1,23 @@
 const ProductModel = require('./../models/ProductModel')
 const CartModel = require('./../models/CartModel')
 const uuid = require('uuid').v4
+const kafka = require('./../../kafka/kafka')
+const actions = require('./../../actions/actions.json')
 
-exports.addToCart = async (req, res) => {
+exports.addToCart = async (req,res) => {
     const { productId, userId, quantity, price } = req.body
-
-    try {
-        const product = await ProductModel.findOne({product_id:productId}).exec()
-        if(product){
-            const cart = await new CartModel({
-                id:uuid(),
-                seller_id:product.seller_id,
-                product_id:productId,
-                user_id:userId,
-                product_name:product.name,
-                img:product.img,
-                category:product.category,
-                description:product.description,
-                price:product.price,
-                quantity:product.quantity
-            })
-            await cart.save((err,data) => {
-                if(err) return res.status(500).json({ message: 'Server error'+err })
-                return res.json({message:"Added to cart"})
-            })
-        }
-
-    } catch (error) {
-        return res.status(500).json({ message: 'Server error'+error })
-    }
+    kafka.sendKafkaRequest('etsy',{ productId, userId, quantity, price, action:actions.ADD_TO_CART },(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
+
 
 exports.getCartItems = async (req, res) => {
     const { userId } = req.body
     try {
         const items = await CartModel.find({user_id:userId}).exec()
+
         if(items){
             return res.json(items)
         }

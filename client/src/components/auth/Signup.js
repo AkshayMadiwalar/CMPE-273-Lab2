@@ -20,9 +20,9 @@ const Signup = ({ showModal, setShowModal }) => {
     }
 
     const [registerForm, setRegisterForm] = useState({
-        registrationemail: "",
-        registrationfirstName: "",
-        registrationpassword: ""
+        email: "",
+        firstName: "",
+        password: ""
     })
 
     const [loginForm,setLoginForm] = useState({
@@ -30,7 +30,7 @@ const Signup = ({ showModal, setShowModal }) => {
         loginPassword:""
     })
 
-    const { registrationemail, registrationfirstName, registrationpassword } = registerForm
+    const { email, firstName, password } = registerForm
 
     const {loginEmail,loginPassword} = loginForm
 
@@ -143,18 +143,18 @@ const Signup = ({ showModal, setShowModal }) => {
                         <Form>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Email address</Form.Label>
-                                <Form.Control type="email" name="registrationemail" value={registrationemail} placeholder="Enter email" onChange={(e) => onChangeData(e)} />
+                                <Form.Control type="email" name="email" value={email} placeholder="Enter email" onChange={(e) => onChangeData(e)} />
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="formBasicName">
                                 <Form.Label>First Name</Form.Label>
-                                <Form.Control type="text" name="registrationfirstName" value={registrationfirstName} placeholder="First Name" onChange={(e) => onChangeData(e)} />
+                                <Form.Control type="text" name="firstName" value={firstName} placeholder="First Name" onChange={(e) => onChangeData(e)} />
                             </Form.Group>
 
 
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" name="registrationpassword" value={registrationpassword} placeholder="Password" onChange={(e) => onChangeData(e)} />
+                                <Form.Control type="password" name="password" value={password} placeholder="Password" onChange={(e) => onChangeData(e)} />
                             </Form.Group>
 
                             <Button style={{ width: "100%" }} variant="warning" onClick={(e) => onSubmitRegister(e)} className="rounded-pill" type="submit">

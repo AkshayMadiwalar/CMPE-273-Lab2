@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "kafka",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -19,6 +19,7 @@
     "elasticsearch": "^16.7.3",
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
+    "kafka-node": "^5.0.0",
     "mocha": "^9.2.2",
     "mongoose": "^6.2.8",
     "mysql": "^2.18.1",

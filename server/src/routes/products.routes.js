@@ -8,11 +8,13 @@ const CartController = require('./../controllers/CartController')
 
 const auth = require('../../middleware/auth')
 
-router.post('/by-category',auth,ProductController.getProductsByCategory)
-router.post('/filter',auth,ProductController.getFIlteredProducts)
-router.post('/sort-by-price',auth,ProductController.filteredProductsSortByPrice)
-router.post('/sort-by-quantity',auth,ProductController.filteredProductsSortByQuantity)
-router.post('/sort-by-sales',auth,ProductController.filteredProductsSortBySales)
+const passport = require('passport')
+
+router.post('/by-category',passport.authenticate('jwt',{session:true}),ProductController.getProductsByCategory)
+router.post('/filter',passport.authenticate('jwt',{session:true}),ProductController.getFIlteredProducts)
+router.post('/sort-by-price',passport.authenticate('jwt',{session:true}),ProductController.filteredProductsSortByPrice)
+router.post('/sort-by-quantity',passport.authenticate('jwt',{session:true}),ProductController.filteredProductsSortByQuantity)
+router.post('/sort-by-sales',passport.authenticate('jwt',{session:true}),ProductController.filteredProductsSortBySales)
 router.get('/:search',ProductController.getProduct)
 
 module.exports = router
