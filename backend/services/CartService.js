@@ -30,3 +30,30 @@ exports.addToCart = async (payload,cb) => {
         return cb(error,null)
     }
 }
+
+exports.getCartItems = async (payload,cb) => {
+    const { userId } = payload
+    try {
+        const items = await CartModel.find({user_id:userId}).exec()
+
+        if(items){
+            return cb(null,items)
+        }
+        return cb(null,[])
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.removeCartItem = async (payload,cb) => {
+    const { userId, productId } = payload
+    try {
+        const data = await CartModel.deleteOne({user_id:userId,product_id:productId})
+        if(data){
+            return cb(data)
+        }
+        return cb("Failed to delte from cart",null)
+    } catch (error) {
+        return cb(error,null)
+    }
+}

@@ -1,84 +1,18 @@
-const OrderModel = require('./../models/OrderModel')
-const CartModel = require('./../models/CartModel')
-const ProductModel = require('./../models/ProductModel')
-const SellerModel = require('./../models/SellerModel')
-const UserModel = require('../models/UserModel')
-const uuid = require('uuid').v4
+const kafka = require('./../../kafka/kafka')
+const actions = require('./../../actions/actions.json')
 
 exports.placeOrder = async (req,res) => {
     const {elasticId,productId,userId,price,quantity} = req.body
-    try {
-        const d = Date(Date.now)
-        const date = d.toString().split(' ')[0] + ' '+ d.toString().split(' ')[1]+ ' ' + d.toString().split(' ')[2] + ' '+ d.toString().split(' ')[3]
-
-        const product = await ProductModel.findOne({product_id:productId}).exec()
-        const user = await UserModel.findOne({id:userId}).exec()
-        const shop = await SellerModel.findOne({seller_id:product.seller_id}).exec()
-        if(product && user){
-            const order = new OrderModel({
-                order_id:uuid(),
-                product_id:productId,
-                seller_id:product.seller_id,
-                name:product.name,
-                category:product.category,
-                description:product.description,
-                price:product.price,
-                quantity:product.quantity,
-                user_id:userId,
-                first_name:user.first_name,
-                last_name:user.last_name,
-                user_email: user.email, 
-                owner_id: shop.owner_id,
-                shop_name: shop.name,
-                owner_name: shop.owner_name,
-                owner_email:shop.owner_email,
-                ph_number: shop.ph_number,
-                shop_img:shop.img
-            })
-            order.save(async (err,data)=>{
-                if(err) return res.status(500).json({message:"Server error"+err})
-                await CartModel.deleteOne({user_id:userId}).exec()
-                return res.json({message:"Order placed"})
-            })
-        }
-        // OrderModel.placeOrder({productId,userId,price,quantity,date},(err,data)=>{
-        //     if(err) return res.status(500).json({message:"Server error"+err})
-        //     if(data){
-        //         const orderModel = data
-        //         CartModel.deleteByUserId({userId},(err,data)=>{
-        //             if(err) return res.status(201).json({message:'Order placed, failed to remove items from cart'})
-        //             if(data){
-        //                 ProductModel.incrementSales({elasticId,productId,quantity},(err,data)=>{
-        //                     if(err){
-        //                         console.log(err)
-        //                         return res.status(201).json({message:'Order placed, failed to update product sales'})
-        //                     }
-        //                     else{
-        //                         SellerModel.incrementSales({sellerId:orderModel.sellerId,quantity},(err,data)=>{
-        //                             if(err){
-        //                                 return res.status(201).json({message:'Order placed, failed to update seller sales'})
-        //                             }
-        //                             else{
-        //                                 //--SUCCESSFULL ORDER--
-        //                                 console.log("---success order---")
-        //                                 return res.json(data)
-        //                             }
-        //                         })
-        //                     }
-        //                 })
-        //             }
-        //         })
-        //     }
-        // })
-    } catch (error) {
-        return res.status(500).json({message:"Server error"+error})
-    }
+    kafka.sendKafkaRequest('orders',{ elasticId,productId,userId,price,quantity, action:actions.PLACE_ORDER},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
+        return res.json(data)
+    })
 }
 
 exports.myOrders = (req,res) => {
     const {id} = req.body
-    OrderModel.myOrders({id},(err,data)=>{
-        if(err) return res.status(500).json({message:'Server Error'})
+    kafka.sendKafkaRequest('orders',{ id, action:actions.MY_ORDERS},(err,data) =>{
+        if(err) return res.status(400).json({message:err})
         return res.json(data)
     })
 }

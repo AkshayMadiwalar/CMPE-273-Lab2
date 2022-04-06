@@ -23,6 +23,7 @@ require('./kafka/UserConsumer')
 require('./kafka/FavoritesConsumer')
 require('./kafka/SellerConsumer')
 require('./kafka/ProductConsumer')
+require('./kafka/OrderConsumer')
 
 
 
