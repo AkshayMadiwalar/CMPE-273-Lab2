@@ -34,6 +34,7 @@ exports.createUser = async (payload, cb) => {
 }
 
 exports.updateUser = async (payload,cb) => {
+    console.log("------payload-", payload)
     const {
         id,
         firstName,
@@ -43,7 +44,7 @@ exports.updateUser = async (payload,cb) => {
         dob,
         city,
         address,
-        zipcode,
+        zip_code,
         country,
         about,
         profileImg
@@ -62,7 +63,7 @@ exports.updateUser = async (payload,cb) => {
                 dob:dob,
                 city:city,
                 address:address,
-                zip_code:zipcode,
+                zip_code:zip_code,
                 country:country,
                 about:about,
                 profile_img:profileImg

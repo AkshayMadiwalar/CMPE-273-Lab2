@@ -44,6 +44,7 @@ const Dashboard = () => {
             }
             grid.push(ar)
         }
+        console.log(grid)
         setProducts(grid)
 
         const curr = window.localStorage.getItem('country_currency')
