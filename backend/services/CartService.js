@@ -50,7 +50,7 @@ exports.removeCartItem = async (payload,cb) => {
     try {
         const data = await CartModel.deleteOne({user_id:userId,product_id:productId})
         if(data){
-            return cb(data)
+            return cb(null,data)
         }
         return cb("Failed to delte from cart",null)
     } catch (error) {

@@ -2,8 +2,8 @@ const kafka = require('./../../kafka/kafka')
 const actions = require('./../../actions/actions.json')
 
 exports.placeOrder = async (req,res) => {
-    const {elasticId,productId,userId,price,quantity} = req.body
-    kafka.sendKafkaRequest('orders',{ elasticId,productId,userId,price,quantity, action:actions.PLACE_ORDER},(err,data) =>{
+    const {elasticId,productId,userId,price,quantity,giftWrap,giftDescription} = req.body
+    kafka.sendKafkaRequest('orders',{ elasticId,productId,userId,price,quantity,giftWrap,giftDescription,action:actions.PLACE_ORDER},(err,data) =>{
         if(err) return res.status(400).json({message:err})
         return res.json(data)
     })

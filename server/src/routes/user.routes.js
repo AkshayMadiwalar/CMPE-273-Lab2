@@ -18,7 +18,7 @@ router.post('/remove-from-favorites',passport.authenticate('jwt',{session:true})
 router.post('/myFavorites',passport.authenticate('jwt',{session:true}),UserController.myFavorites)
 router.get('/product/:id',passport.authenticate('jwt',{session:true}),ProductController.getProductById)
 
-router.post('/myorders',auth,OrderController.myOrders)
+router.post('/myorders',passport.authenticate('jwt',{session:true}),OrderController.myOrders)
 
 
 module.exports = router

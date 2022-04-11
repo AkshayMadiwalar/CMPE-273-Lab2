@@ -70,6 +70,15 @@ const OrderSchema = new mongoose.Schema({
     },
     country: {
         type: String
+    },
+    gift_wrap:{
+        type: Boolean
+    },
+    gift_description:{
+        type:String
+    },
+    product_img:{
+        type:String
     }
 }, 
     {timestamps:true}

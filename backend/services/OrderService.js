@@ -6,7 +6,7 @@ const ProductModel  = require('./../models/ProductModel')
 const uuid = require('uuid').v4
 
 exports.placeOrder = async (payload,cb) => {
-    const {elasticId,productId,userId,price,quantity} = payload
+    const {elasticId,productId,userId,price,quantity,giftWrap,giftDescription} = payload
     try {
         const d = Date(Date.now)
         const date = d.toString().split(' ')[0] + ' '+ d.toString().split(' ')[1]+ ' ' + d.toString().split(' ')[2] + ' '+ d.toString().split(' ')[3]
@@ -24,6 +24,7 @@ exports.placeOrder = async (payload,cb) => {
                 description:product.description,
                 price:product.price,
                 quantity:product.quantity,
+                product_img:product.img,
                 user_id:userId,
                 first_name:user.first_name,
                 last_name:user.last_name,
@@ -33,7 +34,9 @@ exports.placeOrder = async (payload,cb) => {
                 owner_name: shop.owner_name,
                 owner_email:shop.owner_email,
                 ph_number: shop.ph_number,
-                shop_img:shop.img
+                shop_img:shop.img,
+                gift_wrap:giftWrap,
+                gift_description: giftDescription
             })
             order.save(async (err,data)=>{
                 if(err) return cb(err,null)
@@ -48,8 +51,14 @@ exports.placeOrder = async (payload,cb) => {
 
 exports.myOrders = async (payload,cb) => {
     const {id} = payload
-    OrderModel.myOrders({id},(err,data)=>{
-        if(err) return cb(err,null)
-        return cb(null,data)
-    })
+    try {
+        const orders = await OrderModel.find({id}).exec()
+        if(orders){
+            return cb(null,orders)
+        }
+        return cb(null,[])
+    } catch (error) {
+        return cb(error,null)
+    }
+
 }
