@@ -1,0 +1,17 @@
+---Start Zookeeper---
+~/kafka/bin/zookeeper-server-start.sh -daemon ~/kafka/config/zookeeper.properties
+
+---Start Kafka---
+~/kafka/bin/kafka-server-start.sh -daemon ~/kafka/config/server.properties
+
+---Create Topic---
+~/kafka/bin/kafka-topics.sh --bootstrap-server 34.194.22.123:2181 --create --topic demo-topic --replication-factor 1 --partitions 1
+
+~/kafka/bin/kafka-topics.sh --create --topic demo-topic --bootstrap-server 34.194.22.123:9092
+
+---Producer---
+~/kafka/bin/kafka-console-producer.sh --broker-list 34.194.22.123:9092 --topic demo-topic
+
+---Consumer---
+~/kafka/bin/kafka-console-consumer.sh --bootstrap-server 34.194.22.123:9092 --topic demo-topic
+
