@@ -167,7 +167,7 @@ const Dashboard = () => {
                                             <Card.Title>
                                                 <Row>
                                                     
-                                                    <Col cm={5}><Link to={`/item/${product.product_id}/overview`} style={{ textDecoration: 'none', color: 'black' }}>{product.product_name}</Link></Col>
+                                                    <Col cm={5}><Link to={`/item/${product.product_id}/overview`} style={{ textDecoration: 'none', color: 'black' }}>{product.name}</Link></Col>
                                                     <Col sm={5}><span style={{ textAlign: 'right' }}>{product.price}{' '}<span style={{ fontWeight: 'lighter' }}>{currency}</span></span></Col>
                                                     <Col sm={2}>
                                                         {favorites.includes(product.product_id) ? (

@@ -56,18 +56,13 @@ const ProductList = () => {
         })
         setFavorites(favItems)
 
+
         if (params.search) {
             const searchParameter = params.search
+            console.log("Search paramter ---- ", searchParameter)
             var { data } = await axios.get(constants.uri + `/products/${searchParameter}`)
             console.log(data)
-            data = data.products
-            var products = []
-            for (var i = 0; i < data.length; i++) {
-                const {category,description,id,img,name,price,quantity,sellerId} = data[i]._source
-
-                products.push({product_id:id,seller_id:sellerId,product_name:name,img,category,description,price,quantity})
-            }
-            productGrid(products)
+            productGrid(data)
         } else {
             //Get all products
             const { data } = await axios.get(constants.uri + '/dashboard/products')

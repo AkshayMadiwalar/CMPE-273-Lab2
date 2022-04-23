@@ -17,8 +17,8 @@ exports.addToCart = async (payload,cb) => {
                 img:product.img,
                 category:product.category,
                 description:product.description,
-                price:product.price,
-                quantity:product.quantity
+                price:price,
+                quantity:quantity
             })
             await cart.save((err,data) => {
                 if(err) return cb(err,null)

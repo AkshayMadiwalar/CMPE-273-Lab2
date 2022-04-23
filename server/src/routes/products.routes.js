@@ -15,6 +15,6 @@ router.post('/filter',passport.authenticate('jwt',{session:true}),ProductControl
 router.post('/sort-by-price',passport.authenticate('jwt',{session:true}),ProductController.filteredProductsSortByPrice)
 router.post('/sort-by-quantity',passport.authenticate('jwt',{session:true}),ProductController.filteredProductsSortByQuantity)
 router.post('/sort-by-sales',passport.authenticate('jwt',{session:true}),ProductController.filteredProductsSortBySales)
-router.get('/:search',ProductController.getProduct)
+router.get('/:search',passport.authenticate('jwt',{session:true}),ProductController.getProduct)
 
 module.exports = router

@@ -15,3 +15,12 @@
 ---Consumer---
 ~/kafka/bin/kafka-console-consumer.sh --bootstrap-server 34.194.22.123:9092 --topic demo-topic
 
+
+
+
+
+to do:
+
+1. reduce quantity after purchase, increase product sales, shop sales
+2. search "frame"
+3. pagination 

@@ -32,7 +32,6 @@ const EditItem = ({ editItem, setEditItem, item }) => {
         console.log(editFormData)
         const res = await axios.post(constants.uri+"/shop/updateItem",
             {
-                elasticId:editFormData.elastic_id,
                 productId: editFormData.product_id,
                 name:editFormData.product_name,
                 category:editFormData.category,

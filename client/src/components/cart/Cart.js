@@ -13,7 +13,7 @@ const Cart = () => {
     const [currency, setCurrency] = useState()
     const [subtotal, setsubtotal] = useState(0)
 
-    const [giftDescShow,setGiftDescShow] = useState(false)
+    const [giftDescShow, setGiftDescShow] = useState(false)
 
 
     useEffect(async () => {
@@ -29,7 +29,7 @@ const Cart = () => {
         items.map(item => {
             total = total + item.quantity * item.price
         })
-        setsubtotal(total)
+        setsubtotal(total.toFixed(2))
 
         const curr = window.localStorage.getItem('country_currency')
         setCurrency(curr.split(',')[1])
@@ -55,7 +55,7 @@ const Cart = () => {
                 toast.success("Order Placed")
                 setOrderPlaced(true)
             }
-            window.localStorage.setItem('cart', window.localStorage.getItem('cart') - 1)
+           // window.localStorage.setItem('cart', window.localStorage.getItem('cart') - 1)
         })
         toast.success()
     }
@@ -73,32 +73,42 @@ const Cart = () => {
             cartItems.filter(ele => ele.id != item.id).map(item => {
                 total = total + item.quantity * item.price
             })
-            setsubtotal(total)
+            setsubtotal(total.toFixed(2))
 
             window.localStorage.setItem('cart', window.localStorage.getItem('cart') - 1)
         }
     }
 
-    const giftWrap = (e,item) => {
+    const giftWrap = (e, item) => {
         e.preventDefault()
-        if(e.target.checked){
+        if (e.target.checked) {
             setGiftDescShow(true)
             item.giftWrap = true
-        }else{
+        } else {
             setGiftDescShow(false)
             item.giftWrap = false
         }
     }
 
-    const giftDescription = (e,item) => {
+    const onChangeQuanity = (e,item) => {
         e.preventDefault()
-        if(e.target.value){
+        item.quantity = e.target.value
+        var total = 0
+        cartItems.map(item => {
+            total = total + item.quantity * item.price
+        })
+        setsubtotal(total.toFixed(2))
+    }
+
+    const giftDescription = (e, item) => {
+        e.preventDefault()
+        if (e.target.value) {
             item.giftDecscription = e.target.value
         }
     }
 
     if (orderPlaced) {
-       return <Navigate to="/myOrders" />
+        return <Navigate to="/myOrders" />
     }
 
     return (
@@ -122,7 +132,13 @@ const Cart = () => {
                                         </Row>
                                         <Row>
                                             <Col><span>Quantity:</span></Col>
-                                            <Col> <span>{item.quantity}</span></Col>
+                                            <Col> <span>
+                                                {item.quantity}
+                                                &nbsp;
+                                                <Form.Group className="mb-3" controlId="formBasicEmail">
+                                                    <Form.Control type="text" placeholder="Quantity"   onChange={(e)=>onChangeQuanity(e,item)}/>
+                                                </Form.Group>
+                                            </span></Col>
                                         </Row>
                                         <br />
                                         <Row>
@@ -135,18 +151,18 @@ const Cart = () => {
                                                 <Form.Check
                                                     type="checkbox"
                                                     label="Gift wrap"
-                                                    onChange={(e)=>giftWrap(e,item)}
+                                                    onChange={(e) => giftWrap(e, item)}
                                                 />
                                             </Col>
                                             <Col>
                                             </Col>
                                         </Row>
-                                        { giftDescShow && (<Row>
+                                        {giftDescShow && (<Row>
                                             <span>
                                                 <Form.Control
                                                     type="text"
                                                     placeholder='Gift Description'
-                                                    onChange={(e)=>giftDescription(e,item)}
+                                                    onChange={(e) => giftDescription(e, item)}
                                                 />
                                             </span>
                                         </Row>
