@@ -47,7 +47,7 @@ module.exports = class KafkaRequestResponse {
             console.log("request:", requestsWaiting)
             if (correlationId in requestsWaiting) {
 
-                console.log("yes yes")
+                console.log("===========================================================================================================================")
                 var entry = requestsWaiting[correlationId]
 
                 delete requestsWaiting[correlationId]
@@ -61,7 +61,7 @@ module.exports = class KafkaRequestResponse {
                     return entry.results(acknowledgementData.payload.content, null)   
                 }
 
-                entry.results('Server Error', null)   
+                return entry.results('Server Error', null)   
             }
         });
         this.requests = requestsWaiting

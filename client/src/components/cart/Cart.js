@@ -41,15 +41,18 @@ const Cart = () => {
         cartItems.map(async item => {
             i++
             console.log(item, "----------------------------")
-            const res = await axios.post(constants.uri + '/order/place-order', {
-                elasticId: item.elastic_id,
-                productId: item.product_id,
-                userId,
-                price: item.price,
-                quantity: item.quantity,
-                giftWrap: item.giftWrap,
-                giftDescription: item.giftDecscription
-            })
+            if(parseInt(item.quantity) > 0){
+                const res = await axios.post(constants.uri + '/order/place-order', {
+                    elasticId: item.elastic_id,
+                    productId: item.product_id,
+                    userId,
+                    price: item.price,
+                    quantity: item.quantity,
+                    giftWrap: item.giftWrap,
+                    giftDescription: item.giftDecscription
+                })
+            }
+
             console.log(cartItems.length, i)
             if (i == cartItems.length) {
                 toast.success("Order Placed")

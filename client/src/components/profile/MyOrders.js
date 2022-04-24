@@ -116,7 +116,7 @@ const MyOrders = () => {
                                             )}
 
                                             <br />
-                                            <Row>{order.date ? (<span>Ordered on {order.date}</span>) : ''}</Row>
+                                            <Row>{order.createdAt ? (<span>Ordered on {order.createdAt.split(":")[0].split("T")[0]}</span>) : ''}</Row>
                                         </Col>
                                     </Row>
                                 </Card.Text>

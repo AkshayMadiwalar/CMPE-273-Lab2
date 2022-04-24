@@ -51,8 +51,9 @@ exports.placeOrder = async (payload,cb) => {
 
 exports.myOrders = async (payload,cb) => {
     const {id} = payload
+    console.log("user id: ",id)
     try {
-        const orders = await OrderModel.find({id}).exec()
+        const orders = await OrderModel.find({user_id:id}).exec()
         if(orders){
             return cb(null,orders)
         }
