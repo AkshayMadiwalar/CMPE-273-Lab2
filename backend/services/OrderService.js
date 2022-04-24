@@ -53,7 +53,7 @@ exports.myOrders = async (payload,cb) => {
     const {id} = payload
     console.log("user id: ",id)
     try {
-        const orders = await OrderModel.find({user_id:id}).exec()
+        const orders = await OrderModel.find({user_id:id}).sort({"createdAt":-1}).exec()
         if(orders){
             return cb(null,orders)
         }

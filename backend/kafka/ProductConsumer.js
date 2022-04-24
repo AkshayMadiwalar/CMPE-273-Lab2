@@ -12,7 +12,7 @@ kafkaConection.getConsumer('products', (consumer) => {
         const { payload, correlationId } = data
         const { action } = payload
 
-        console.log("1. Cosumed Data at backend...")
+        console.log("1. Cosumed Data at backend...",action)
 
         if (action == actions.CREATE_PRODUCT) {
             ProductService.createProduct(payload, (err, res) => {

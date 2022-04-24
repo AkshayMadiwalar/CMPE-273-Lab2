@@ -47,7 +47,6 @@ module.exports = class KafkaRequestResponse {
             console.log("request:", requestsWaiting)
             if (correlationId in requestsWaiting) {
 
-                console.log("===========================================================================================================================")
                 var entry = requestsWaiting[correlationId]
 
                 delete requestsWaiting[correlationId]

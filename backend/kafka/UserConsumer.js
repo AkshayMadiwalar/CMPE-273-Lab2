@@ -13,7 +13,7 @@ kafkaConection.getConsumer('users',(consumer) => {
         const {payload,correlationId} = data 
         const { action } = payload
         
-        console.log("1. Cosumed Data at backend...")
+        console.log("1. Cosumed Data at backend...",action)
 
         if(action == actions.CREATE_USER){
             UserService.createUser(payload,(err,res) => {

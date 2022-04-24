@@ -30,7 +30,7 @@ const MyOrders = () => {
         if (orders.length % itemsPerPage != 0) {
             no_of_pages = no_of_pages + 1
         }
-        orders = orders.slice(0, itemsPerPage - 1)
+        orders = orders.slice(0, itemsPerPage )
         setorders(orders)
         for (let number = 1; number <= no_of_pages; number++) {
             list.push(number);
@@ -92,7 +92,7 @@ const MyOrders = () => {
                     {orders && orders.length > 0 ?
                         orders.map(order => (
                             <>
-                                <Card.Title><span style={{ fontWeight: 'lighter' }}>Order Id:</span> <span style={{ fontWeight: 'light' }}>{order.order_id}</span></Card.Title>
+                                <Card.Title><span style={{ fontWeight: 'lighter' }}>Order Id:</span> <span style={{ fontWeight: 'light' }}>{order.order_id.split("-")[0]}</span></Card.Title>
                                 <Card.Text>
                                     <Row>
                                         <Col sm={3}>
@@ -107,12 +107,12 @@ const MyOrders = () => {
                                             <br />
                                             <Row><Col sm={3}><span>Total Paid</span></Col><Col sm={3}><span>{order.price * order.quantity}{' '}<span style={{ fontWeight: 'lighter' }}>{currency}</span></span></Col></Row>
                                         </Col>
-                                        <Col sm={2}>
+                                        <Col sm={3}>
                                             <br />
                                             <Row><span>Seller: {order.shop_name}</span></Row>
                                             <br />
                                             {order.gift_wrap && (
-                                                <Row><span>GIFT WRAPED</span><span>Text: {order.gift_description}</span></Row>
+                                                <Row><span style={{color:"green",fontWeight:'bold'}}>GIFT WRAPED</span><span>Text: <span style={{color:"green",fontWeight:'bold'}}>{order.gift_description}</span></span></Row>
                                             )}
 
                                             <br />
